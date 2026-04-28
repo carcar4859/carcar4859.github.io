@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name — GIS Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #1c2330;
+      --line: rgba(0,200,150,0.15);
+      --accent: #00c896;
+      --accent2: #378add;
+      --text: #e6edf3;
+      --muted: #7d8590;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .everything { position: relative; z-index: 1; }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      min-height: 88vh;
+      display: flex;
+      align-items: center;
+      padding: 0 3rem;
+      position: relative;
+    }
+    .hero-content { max-width: 700px; }
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+    h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+    h1 span { color: var(--accent); font-weight: 500; }
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      padding: 0.7rem 1.5rem;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-ghost {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      padding: 0.7rem 1.5rem;
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(0,200,150,0.4);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+    .btn-ghost:hover { background: rgba(0,200,150,0.07); }
+
+    .coord-badge {
+      position: absolute;
+      bottom: 3rem;
+      right: 3rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      opacity: 0.5;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 5rem 3rem;
+      border-top: 1px solid var(--border);
+    }
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      margin-bottom: 2.5rem;
+      color: var(--text);
+    }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .about-text { color: #b5c0cb; line-height: 1.85; }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+    }
+    .stat-cell {
+      background: var(--bg2);
+      padding: 1.5rem;
+    }
+    .stat-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      color: var(--accent);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 0.3rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* PROJECTS */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+    .project-card {
+      background: var(--bg2);
+      padding: 1.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform 0.25s;
+      transform-origin: bottom;
+    }
+    .project-card:hover { background: var(--bg3); }
+    .project-card:hover::before { transform: scaleY(1); }
+    .project-type {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--accent2);
+      letter-spacing: 0.12em;
+      margin-bottom: 0.7rem;
+    }
+    .project-title {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+      color: var(--text);
+    }
+    .project-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      padding: 3px 8px;
+      border: 1px solid rgba(0,200,150,0.25);
+      color: var(--accent);
+      letter-spacing: 0.06em;
+    }
+
+    /* SKILLS */
+    .skills-outer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .skill-group-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0;
+      font-size: 13px;
+      color: #b5c0cb;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .skill-bar-wrap { width: 60px; height: 2px; background: var(--border); }
+    .skill-bar { height: 100%; background: var(--accent); }
+
+    /* RESUME */
+    .resume-banner {
+      background: var(--bg2);
+      border: 1px solid rgba(0,200,150,0.2);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .resume-banner p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+    .resume-banner strong { color: var(--text); font-size: 15px; }
+
+    /* BLOG */
+    .blog-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); }
+    .blog-item {
+      background: var(--bg2);
+      padding: 1.5rem 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .blog-item:hover { background: var(--bg3); }
+    .blog-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      min-width: 110px;
+    }
+    .blog-title { font-size: 14px; color: var(--text); flex: 1; }
+    .blog-arrow { color: var(--accent); font-family: monospace; margin-left: auto; }
+
+    /* CONTACT */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+    .contact-info p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.9;
+      margin-bottom: 1.5rem;
+    }
+    .contact-links { display: flex; flex-direction: column; gap: 0.8rem; }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link-icon {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-field label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .form-field input, .form-field textarea {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.7rem 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+    .form-field input:focus, .form-field textarea:focus {
+      border-color: rgba(0,200,150,0.5);
+    }
+
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer p {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1rem; }
+      section { padding: 3.5rem 1.5rem; }
+      .hero { padding: 0 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .coord-badge { display: none; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<div class="everything">
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-logo">// YOUR_NAME.gis</span>
+    <div class="nav-links">
+      <a href="#about">about</a>
+      <a href="#projects">projects</a>
+      <a href="#skills">skills</a>
+      <a href="#blog">blog</a>
+      <a href="#contact">contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero" style="border-top: none;">
+    <div class="hero-content">
+      <div class="hero-tag">GIS analyst &amp; spatial developer</div>
+      <h1>Mapping data<br>into <span>insight</span></h1>
+      <p class="hero-sub">I work at the intersection of geography, data, and code — building spatial tools, visualizations, and analyses that make complex environments legible.</p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-primary">View projects</a>
+        <a href="#contact" class="btn-ghost">Get in touch</a>
+      </div>
+    </div>
+    <div class="coord-badge">43.8561° N, 79.3370° W</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">01 — about</div>
+    <h2>Background</h2>
+    <div class="about-grid">
+      <div>
+        <p class="about-text">I'm a GIS analyst and spatial developer based in [your city]. My work spans environmental analysis, urban planning, and data engineering — using tools like ArcGIS, QGIS, Python, and PostGIS to turn raw geographic data into actionable insights.</p>
+        <br>
+        <p class="about-text">Outside of GIS, I'm interested in web mapping, open data, and building tools that make spatial analysis more accessible. This site is a living portfolio — new projects and writing get added regularly.</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-cell">
+          <div class="stat-num">12+</div>
+          <div class="stat-label">GIS projects</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num">4</div>
+          <div class="stat-label">years experience</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num">8</div>
+          <div class="stat-label">tools &amp; languages</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num">3</div>
+          <div class="stat-label">domains covered</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-label">02 — work</div>
+    <h2>GIS Projects</h2>
+    <div class="projects-grid">
+
+      <!-- PROJECT CARD — duplicate this block to add more projects -->
+      <div class="project-card">
+        <div class="project-type">spatial analysis</div>
+        <div class="project-title">Urban Heat Island Mapping</div>
+        <p class="project-desc">Analyzed land surface temperature data across the city using Landsat imagery to identify heat island zones and correlate with green cover.</p>
+        <div class="project-tags">
+          <span class="tag">ArcGIS</span>
+          <span class="tag">Landsat</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-type">web mapping</div>
+        <div class="project-title">Transit Accessibility Dashboard</div>
+        <p class="project-desc">Interactive Leaflet.js map visualizing walking distance to transit stops, with isochrone overlays by neighbourhood income bracket.</p>
+        <div class="project-tags">
+          <span class="tag">Leaflet.js</span>
+          <span class="tag">GTFS</span>
+          <span class="tag">PostGIS</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-type">data engineering</div>
+        <div class="project-title">Watershed Delineation Pipeline</div>
+        <p class="project-desc">Automated DEM processing pipeline in Python to delineate sub-watersheds and calculate flow accumulation for regional hydrological modelling.</p>
+        <div class="project-tags">
+          <span class="tag">QGIS</span>
+          <span class="tag">GDAL</span>
+          <span class="tag">Whitebox</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-type">remote sensing</div>
+        <div class="project-title">Forest Change Detection</div>
+        <p class="project-desc">Multi-temporal NDVI analysis using Sentinel-2 to detect deforestation and regrowth patterns over a 5-year period.</p>
+        <div class="project-tags">
+          <span class="tag">Sentinel-2</span>
+          <span class="tag">Google Earth Engine</span>
+        </div>
+      </div>
+
+      <!-- PLACEHOLDER — remove or replace when ready -->
+      <div class="project-card" style="border: 1px dashed rgba(0,200,150,0.2); background: transparent; cursor: default;">
+        <div class="project-type" style="opacity: 0.4;">coming soon</div>
+        <div class="project-title" style="opacity: 0.4;">Your next project</div>
+        <p class="project-desc" style="opacity: 0.4;">Duplicate any project card above and drop in your details here.</p>
+        <div class="project-tags"><span class="tag" style="opacity: 0.4;">+ add project</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label">03 — toolkit</div>
+    <h2>Skills &amp; tech</h2>
+    <div class="skills-outer">
+      <div>
+        <div class="skill-group-label">GIS platforms</div>
+        <div class="skill-item"><span>ArcGIS Pro</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 90%;"></div></div></div>
+        <div class="skill-item"><span>QGIS</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 85%;"></div></div></div>
+        <div class="skill-item"><span>Google Earth Engine</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 70%;"></div></div></div>
+      </div>
+      <div>
+        <div class="skill-group-label">Languages</div>
+        <div class="skill-item"><span>Python</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 80%;"></div></div></div>
+        <div class="skill-item"><span>SQL / PostGIS</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 75%;"></div></div></div>
+        <div class="skill-item"><span>JavaScript</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 55%;"></div></div></div>
+      </div>
+      <div>
+        <div class="skill-group-label">Web &amp; data</div>
+        <div class="skill-item"><span>Leaflet.js</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 70%;"></div></div></div>
+        <div class="skill-item"><span>GeoPandas / GDAL</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 80%;"></div></div></div>
+        <div class="skill-item"><span>Mapbox GL</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 50%;"></div></div></div>
+      </div>
+      <div>
+        <div class="skill-group-label">Analysis domains</div>
+        <div class="skill-item"><span>Remote sensing</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 75%;"></div></div></div>
+        <div class="skill-item"><span>Urban / planning</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 80%;"></div></div></div>
+        <div class="skill-item"><span>Hydrology</span><div class="skill-bar-wrap"><div class="skill-bar" style="width: 65%;"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUME -->
+  <section id="resume" style="padding-top: 3rem; padding-bottom: 3rem;">
+    <div class="section-label">04 — résumé</div>
+    <h2>Download CV</h2>
+    <!--
+      Place your resume PDF in the same folder as this file and name it "resume.pdf"
+      The download button below will work automatically.
+    -->
+    <div class="resume-banner">
+      <div>
+        <strong>Your Name — GIS Analyst</strong>
+        <p>Last updated April 2026 · PDF · 1 page</p>
+      </div>
+      <a href="resume.pdf" class="btn-primary" download>↓ download resume</a>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog">
+    <div class="section-label">05 — writing</div>
+    <h2>Notes &amp; articles</h2>
+    <div class="blog-list">
+
+      <!-- BLOG ITEM — duplicate and update href, date, and title to add posts -->
+      <a href="#" class="blog-item">
+        <span class="blog-date">2026-03-14</span>
+        <span class="blog-title">Getting started with PostGIS for spatial queries</span>
+        <span class="blog-arrow">→</span>
+      </a>
+
+      <a href="#" class="blog-item">
+        <span class="blog-date">2026-01-08</span>
+        <span class="blog-title">How I automated my DEM processing workflow with Python</span>
+        <span class="blog-arrow">→</span>
+      </a>
+
+      <a href="#" class="blog-item">
+        <span class="blog-date">2025-11-20</span>
+        <span class="blog-title">Comparing Leaflet vs Mapbox GL for web mapping projects</span>
+        <span class="blog-arrow">→</span>
+      </a>
+
+      <!-- PLACEHOLDER — remove when you have real posts -->
+      <div class="blog-item" style="opacity: 0.4; cursor: default;">
+        <span class="blog-date">— draft —</span>
+        <span class="blog-title">Add your next post here</span>
+        <span class="blog-arrow">+</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-label">06 — contact</div>
+    <h2>Get in touch</h2>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <p>Open to freelance projects, full-time roles, and collaborations. Feel free to reach out if you're working on something interesting in the GIS, spatial data, or environmental space.</p>
+        <div class="contact-links">
+          <!-- Update these with your real links -->
+          <a href="mailto:you@email.com" class="contact-link">
+            <span class="contact-link-icon">@</span>you@email.com
+          </a>
+          <a href="https://linkedin.com/in/yourname" class="contact-link" target="_blank" rel="noopener">
+            <span class="contact-link-icon">in</span>linkedin.com/in/yourname
+          </a>
+          <a href="https://github.com/yourname" class="contact-link" target="_blank" rel="noopener">
+            <span class="contact-link-icon">gh</span>github.com/yourname
+          </a>
+        </div>
+      </div>
+      <!--
+        To make the contact form functional, sign up at https://formspree.io (free tier available)
+        and replace "YOUR_FORM_ID" in the form action below.
+      -->
+      <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <div class="form-field">
+          <label for="name">name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required />
+        </div>
+        <div class="form-field">
+          <label for="email">email</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required />
+        </div>
+        <div class="form-field">
+          <label for="message">message</label>
+          <textarea id="message" name="message" rows="4" placeholder="What are you working on?" required></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="align-self: flex-start;">send message →</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 — YOUR_NAME.gis</p>
+    <p>built with intention // all coordinates accurate</p>
+  </footer>
+
+</div>
+</body>
+</html>
